@@ -12,7 +12,7 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 
-\Bitrix\Main\UI\Extension::load('ui.fonts.opensans');
+\Bitrix\Main\UI\Extension::load('ui.fonts.opensans'); /** Загрузка шрифтов */
 
 $themeClass = isset($arParams['TEMPLATE_THEME']) ? ' bx-'.$arParams['TEMPLATE_THEME'] : '';
 ?>
@@ -23,7 +23,7 @@ $themeClass = isset($arParams['TEMPLATE_THEME']) ? ' bx-'.$arParams['TEMPLATE_TH
 		<?endif;?>
 
 		<div class="row">
-			<?foreach($arResult["ITEMS"] as $arItem):?>
+			<?foreach($arResult["ITEMS"] as $arItem):?> /* цикл по элементам */
 				<?
 					$this->AddEditAction(
 						$arItem['ID'],
@@ -43,7 +43,7 @@ $themeClass = isset($arParams['TEMPLATE_THEME']) ? ' bx-'.$arParams['TEMPLATE_TH
 					);
 				?>
 				<div class="news-list-item mb-2 col-sm" id="<?=$this->GetEditAreaId($arItem['ID']);?>">
-					<div class="card">
+					<div class="card"> /* как я понял создаёт карточки и проверяет (далее) какая информация (фото, видео ...) будет отображаться*/
 						<?if($arParams["DISPLAY_PICTURE"]!="N"):
 							if ($arItem["VIDEO"] ?? null)
 							{
@@ -334,7 +334,7 @@ $themeClass = isset($arParams['TEMPLATE_THEME']) ? ' bx-'.$arParams['TEMPLATE_TH
 						</div>
 					</div>
 				</div>
-			<?endforeach;?>
+			<?endforeach;?> /* заканчиваем цикл по элементам */
 		</div>
 
 		<?if($arParams["DISPLAY_BOTTOM_PAGER"]):?>
