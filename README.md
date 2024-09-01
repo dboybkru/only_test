@@ -9,51 +9,51 @@
 ## Структура проекта
 
 Дерево шаблона в структуре Битрикса:
-
 /local/components/example/serviceslist/
-├── /lang
-│   └── /ru
-│       └── .description.php
-├── /templates
-│   └── /.default
-│       ├── template.php
-│       ├── css
-│       │       └── common.css
-│       ├── fonts
-│       │       ├── Gilroy-Bold.ttf
-│       │       ├── Gilroy-Bold.woff
-│       │       ├── Gilroy-Bold.woff2
-│       │       ├── Gilroy-Extrabold.ttf
-│       │       ├── Gilroy-Extrabold.woff
-│       │       ├── Gilroy-Extrabold.woff2
-│       │       ├── Gilroy-Light.ttf
-│       │       ├── Gilroy-Light.woff
-│       │       ├── Gilroy-Light.woff2
-│       │       ├── Gilroy-Medium.ttf
-│       │       ├── Gilroy-Medium.woff
-│       │       ├── Gilroy-Medium.woff2
-│       │       ├── Gilroy-Regular.ttf
-│       │       ├── Gilroy-Regular.woff
-│       │       ├── Gilroy-Regular.woff2
-│       │       ├── GothamPro.ttf
-│       │       ├── GothamPro.woff
-│       │       └── GothamPro.woff2
-│       └── images
-│               ├── article-bg.png
-│               ├── article-item-bg-1.jpg
-│               ├── article-item-bg-2.jpg
-│               ├── article-item-bg-3.jpg
-│               ├── article-item-bg-4.jpg
-│               ├── article-item-bg-5.jpg
-│               └── article-item-bg-6.jpg
+├── lang/
+│ └── ru/
+│ └── .description.php
+├── templates/
+│ └── .default/
+│ ├── template.php
+│ ├── css/
+│ │ └── common.css
+│ ├── fonts/
+│ │ ├── Gilroy-Bold.ttf
+│ │ ├── Gilroy-Bold.woff
+│ │ ├── Gilroy-Bold.woff2
+│ │ ├── Gilroy-Extrabold.ttf
+│ │ ├── Gilroy-Extrabold.woff
+│ │ ├── Gilroy-Extrabold.woff2
+│ │ ├── Gilroy-Light.ttf
+│ │ ├── Gilroy-Light.woff
+│ │ ├── Gilroy-Light.woff2
+│ │ ├── Gilroy-Medium.ttf
+│ │ ├── Gilroy-Medium.woff
+│ │ ├── Gilroy-Medium.woff2
+│ │ ├── Gilroy-Regular.ttf
+│ │ ├── Gilroy-Regular.woff
+│ │ ├── Gilroy-Regular.woff2
+│ │ ├── GothamPro.ttf
+│ │ ├── GothamPro.woff
+│ │ └── GothamPro.woff2
+│ └── images/
+│ ├── article-bg.png
+│ ├── article-item-bg-1.jpg
+│ ├── article-item-bg-2.jpg
+│ ├── article-item-bg-3.jpg
+│ ├── article-item-bg-4.jpg
+│ ├── article-item-bg-5.jpg
+│ └── article-item-bg-6.jpg
 ├── .description.php
 ├── .parameters.php
 └── class.php
 
+Скопировать код
 
 - **class.php** - содержит логику компонента.
 - **template.php** - основной файл шаблона, в котором реализуется логика отображения контента компонента.
 
 ## Изменения
 
-Я создал шаблон компонента servicelist ("Наши услуги") в 1C-Bitrix. Для создания шаблона были нагло использованы материалы из вышеуказанных источников.
+Я создал шаблон компонента `serviceslist` ("Наши услуги") в 1C-Bitrix. Для создания шаблона были нагло использованы материалы из вышеуказанных источников.
