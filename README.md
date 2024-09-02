@@ -3,7 +3,7 @@
 
 ## Описание
 
-Переделал шаблон `news.list` в 1C-Bitrix в шаблон компонента `serviceslist` ("Наши услуги").
+Переделал шаблон `news.list` в 1C-Bitrix в шаблон компонента `article_list`.
 
 Я создал шаблон компонента `serviceslist` ("Наши услуги") для 1C-Bitrix, нагло используя материалы из [gdecider](https://gdecider.github.io/articles_bx-component-creation.html) и документации [1C-Bitrix](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829&LESSON_PATH=3913.4565.2829#template_search).
 
