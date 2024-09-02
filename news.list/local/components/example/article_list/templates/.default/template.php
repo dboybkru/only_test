@@ -1,10 +1,5 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die(); ?>
 
-<?php
-require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
-$APPLICATION->SetTitle("Список статей"); 
-?>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -31,8 +26,5 @@ $APPLICATION->SetTitle("Список статей");
     </div>
 </div>
 
-<?php
-require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
-?>
 </body>
 </html>
