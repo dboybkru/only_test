@@ -6,8 +6,8 @@
     <title>Связаться</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <link rel="shortcut icon" href="/local/components/example/webformintegration/templates/.default/images/favicon.604825ed.ico" type="image/x-icon">
-    <link href="/local/components/example/webformintegration/templates/.default/css/common.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/local/components/example/form.result.new/templates/.default/images/favicon.604825ed.ico" type="image/x-icon">
+    <link href="/local/components/example/form.result.new/templates/.default/css/common.css" rel="stylesheet">
 </head>
 <body>
     <div class="contact-form">
