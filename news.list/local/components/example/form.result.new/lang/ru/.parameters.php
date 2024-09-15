@@ -1,4 +1,7 @@
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
-$MESS["WEB_FORM_ID"] = "3";
+use Bitrix\Main\Localization\Loc;
+
+Loc::loadMessages(__FILE__);
+$MESS["WEB_FORM_ID"] = "Выберите ID веб-формы"; 
 ?>
