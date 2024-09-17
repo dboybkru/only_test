@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['WEB_FORM_ID']) && $_PO
                 "TITLE" => "Новый",
                 "ACTIVE" => "Y",
                 "C_SORT" => 100,
+                "DEFAULT" => "Y", // Устанавливаем статус по умолчанию
             ));
         }
 
