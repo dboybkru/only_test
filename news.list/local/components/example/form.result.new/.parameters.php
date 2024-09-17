@@ -4,7 +4,7 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Loader;
 
 // Инициализация локализации
-Loc::loadMessages(__FILE__);
+// Loc::loadMessages(__FILE__);
 
 // Проверяем, что модуль main установлен
 if (!Loader::includeModule('main')) {

@@ -7,8 +7,8 @@ $arComponentDescription = [
     "DESCRIPTION" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_DESCRIPTION"),
     "COMPLEX" => "N",
     "PATH" => [
-        "ID" => Loc::getMessage("FORM_RESULT_NEW_PATH_ID"),
-        "NAME" => Loc::getMessage("FORM_RESULT_NEW_PATH_NAME"),
+        "ID" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_PATH_ID"),
+        "NAME" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_PATH_NAME"),
     ],
 ];
 ?>
