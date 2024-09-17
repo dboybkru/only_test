@@ -1,169 +1,68 @@
-Дерево компонента:
+п»їР’РѕС‚ РїРѕР»РЅРѕРµ РґРµСЂРµРІРѕ РєРѕРјРїРѕРЅРµРЅС‚Р° Рё РєРѕРґС‹ С„Р°Р№Р»РѕРІ:
+Р”РµСЂРµРІРѕ РєРѕРјРїРѕРЅРµРЅС‚Р°
 
-```
+
+
 /local/components/example/form.result.new
-+-- /lang
-¦   L-- /ru
-¦       +-- .description.php
-¦       L-- .parameters.php
-+-- /templates
-¦   L-- /.default
-¦       L-- template.php
-+-- .description.php
-+-- .parameters.php
-L-- class.php
-```
+в”њв”Ђв”Ђ /lang
+в”‚   в””в”Ђв”Ђ /ru
+в”‚       в”њв”Ђв”Ђ .description.php
+в”‚       в””в”Ђв”Ђ .parameters.php
+в”њв”Ђв”Ђ /templates
+в”‚   в””в”Ђв”Ђ /.default
+в”‚       в””в”Ђв”Ђ template.php
+в”њв”Ђв”Ђ .description.php
+в”њв”Ђв”Ђ .parameters.php
+в””в”Ђв”Ђ class.php
 
-Полный код файлов:
 
-**.description.php**
-```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
-use Bitrix\Main\Localization\Loc;
+РљРѕРґ С„Р°Р№Р»РѕРІ
+1. lang/ru/.description.php
 
-$arComponentDescription = [
-    "NAME" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT"),
-    "DESCRIPTION" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_DESCRIPTION"),
-    "COMPLEX" => "N",
-    "PATH" => [
-        "ID" => Loc::getMessage("FORM_RESULT_NEW_PATH_ID"),
-        "NAME" => Loc::getMessage("FORM_RESULT_NEW_PATH_NAME"),
-    ],
-];
+
+
+php
+
+
+
+<?php
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+$MESS["FORM_RESULT_NEW_COMPONENT_PATH_ID"] = "local";
+$MESS["FORM_RESULT_NEW_COMPONENT_PATH_NAME"] = "РљРѕРјРїРѕРЅРµРЅС‚С‹ РїСЂРѕРµРєС‚Р°";
+$MESS["FORM_RESULT_NEW_COMPONENT"] = "РћР±СЂР°Р±РѕС‚С‡РёРє С„РѕСЂРј (РЅРѕРІС‹Р№)";
+$MESS["FORM_RESULT_NEW_COMPONENT_DESCRIPTION"] = "РљРѕРјРїРѕРЅРµРЅС‚ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РІРµР±-С„РѕСЂРј (РЅРѕРІР°СЏ РІРµСЂСЃРёСЏ).";
 ?>
-```
 
-**.parameters.php**
-```php
+
+
+2. lang/ru/.parameters.php
+
+
+
+php
+
+
+
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
 
-// Инициализация локализации
 Loc::loadMessages(__FILE__);
-
-// Проверяем, что модуль main установлен
-if (!Loader::includeModule('main')) {
-    throw new Exception(Loc::getMessage('MAIN_MODULE_NOT_INSTALLED'));
-}
-
-// Проверяем, что модуль веб-форм установлен
-if (!Loader::includeModule('form')) {
-    throw new Exception(Loc::getMessage('FORM_MODULE_NOT_INSTALLED'));
-}
-
-// Получаем список веб-форм
-$webForms = [];
-try {
-    // Используем класс CForm для получения списка форм
-    $dbForms = CForm::GetList($by = "s_sort", $order = "asc", ["ACTIVE" => "Y"], $is_filtered);
-    
-    while ($form = $dbForms->Fetch()) {
-        $webForms[$form['ID']] = $form['NAME'];
-    }
-
-    if (empty($webForms)) {
-        $webForms[0] = Loc::getMessage('NO_FORMS_FOUND'); // В случае пустого списка
-    }
-} catch (Exception $e) {
-    file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_errors.txt', date('Y-m-d H:i:s') . " - Ошибка получения форм: " . $e->getMessage() . "\n", FILE_APPEND);
-    $webForms[0] = 'Ошибка получения форм'; // Установить сообщение об ошибке в качестве варианта в выпадающем списке
-}
-
-// Параметры компонента
-$arComponentParameters = [
-    'PARAMETERS' => [
-        'CACHE_TIME' => ['DEFAULT' => 3600],
-        'WEB_FORM_ID' => [
-            'PARENT' => 'BASE',
-            'NAME' => Loc::getMessage('WEB_FORM_ID'),
-            'TYPE' => 'LIST',
-            'VALUES' => $webForms,
-            'DEFAULT' => '',
-            'REFRESH' => 'Y'
-        ],
-    ]
-];
+$MESS["WEB_FORM_ID"] = "Р’С‹Р±РµСЂРёС‚Рµ ID РІРµР±-С„РѕСЂРјС‹"; 
 ?>
-```
 
-**class.php**
-```php
-<?php
-if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
-use Bitrix\Main\Localization\Loc;
-use Bitrix\Main\Loader;
 
-class CFormResultNew extends CBitrixComponent
-{
-    public function executeComponent()
-    {
-        // Проверяем, что модуль веб-форм установлен
-        if (!Loader::includeModule('form')) {
-            throw new Exception(Loc::getMessage('FORM_MODULE_NOT_INSTALLED'));
-        }
+3. templates/.default/template.php
 
-        if ($_SERVER["REQUEST_METHOD"] === "POST" && check_bitrix_sessid()) {
-            $this->processForm();
-        }
 
-        $this->includeComponentTemplate();
-    }
 
-    protected function processForm()
-    {
-        // Логирование входящих данных
-        $incomingData = $_POST; // Входящие данные
-        $logEntryIn = date('Y-m-d H:i:s') . " IN:\n" . json_encode($incomingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryIn, FILE_APPEND);
+php
 
-        // Проверяем, что веб-форма выбрана
-        if (empty($this->arParams['WEB_FORM_ID'])) {
-            return;
-        }
 
-        // Подготовка массива значений ответов
-        $arValues = [
-            "form_text_medicine_name" => $incomingData['medicine_name'],
-            "form_text_medicine_company" => $incomingData['medicine_company'],
-            "form_email_medicine_email" => $incomingData['medicine_email'],
-            "form_text_medicine_phone" => $incomingData['medicine_phone'],
-            "form_textarea_medicine_message" => $incomingData['medicine_message'],
-        ];
 
-        // Логирование массива значений перед добавлением
-        $logEntryValues = date('Y-m-d H:i:s') . " VALUES:\n" . json_encode($arValues, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryValues, FILE_APPEND);
-
-        // Создаем новый результат формы
-        $resultId = CFormResult::Add($this->arParams['WEB_FORM_ID'], $arValues);
-
-        if ($resultId) {
-            // Успешно добавлено
-            $outgoingData = [
-                'status' => 'success',
-                'message' => 'Форма успешно обработана. ID результата: ' . $resultId
-            ];
-        } else {
-            // Ошибка при добавлении
-            $outgoingData = [
-                'status' => 'error',
-                'message' => 'Ошибка при обработке формы.'
-            ];
-        }
-
-        // Логирование исходящих данных
-        $logEntryOut = date('Y-m-d H:i:s') . " OUT:\n" . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryOut, FILE_APPEND);
-    }
-}
-?>
-```
-
-**template.php**
-```php
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die(); ?>
 
 <!DOCTYPE html>
@@ -178,9 +77,9 @@ class CFormResultNew extends CBitrixComponent
 <body>
 <div class="contact-form">
     <div class="contact-form__head">
-        <div class="contact-form__head-title">Связаться</div>
-        <div class="contact-form__head-text">Наши сотрудники помогут выполнить подбор услуги и&nbsp;расчет цены с&nbsp;учетом
-            ваших требований
+        <div class="contact-form__head-title">РЎРІСЏР·Р°С‚СЊСЃСЏ</div>
+        <div class="contact-form__head-text">РќР°С€Рё СЃРѕС‚СЂСѓРґРЅРёРєРё РїРѕРјРѕРіСѓС‚ РІС‹РїРѕР»РЅРёС‚СЊ РїРѕРґР±РѕСЂ СѓСЃР»СѓРіРё Рё&nbsp;СЂР°СЃС‡РµС‚ С†РµРЅС‹ СЃ&nbsp;СѓС‡РµС‚РѕРј
+            РІР°С€РёС… С‚СЂРµР±РѕРІР°РЅРёР№
         </div>
     </div>
     <form class="contact-form__form" method="post" action="<?= POST_FORM_ACTION_URI ?>">
@@ -191,28 +90,28 @@ class CFormResultNew extends CBitrixComponent
         <div class="contact-form__form-inputs">
             <div class="input contact-form__input">
                 <label class="input__label" for="medicine_name">
-                    <div class="input__label-text">Ваше имя*</div>
+                    <div class="input__label-text">Р’Р°С€Рµ РёРјСЏ*</div>
                     <input class="input__input" type="text" id="medicine_name" name="medicine_name" value="" required="">
-                    <div class="input__notification">Поле должно содержать не менее 3-х символов</div>
+                    <div class="input__notification">РџРѕР»Рµ РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊ РЅРµ РјРµРЅРµРµ 3-С… СЃРёРјРІРѕР»РѕРІ</div>
                 </label>
             </div>
             <div class="input contact-form__input">
                 <label class="input__label" for="medicine_company">
-                    <div class="input__label-text">Компания/Должность*</div>
+                    <div class="input__label-text">РљРѕРјРїР°РЅРёСЏ/Р”РѕР»Р¶РЅРѕСЃС‚СЊ*</div>
                     <input class="input__input" type="text" id="medicine_company" name="medicine_company" value="" required="">
-                    <div class="input__notification">Поле должно содержать не менее 3-х символов</div>
+                    <div class="input__notification">РџРѕР»Рµ РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊ РЅРµ РјРµРЅРµРµ 3-С… СЃРёРјРІРѕР»РѕРІ</div>
                 </label>
             </div>
             <div class="input contact-form__input">
                 <label class="input__label" for="medicine_email">
                     <div class="input__label-text">Email*</div>
                     <input class="input__input" type="email" id="medicine_email" name="medicine_email" value="" required="">
-                    <div class="input__notification">Неверный формат почты</div>
+                    <div class="input__notification">РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РїРѕС‡С‚С‹</div>
                 </label>
             </div>
             <div class="input contact-form__input">
                 <label class="input__label" for="medicine_phone">
-                    <div class="input__label-text">Номер телефона*</div>
+                    <div class="input__label-text">РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°*</div>
                     <input class="input__input" type="text" id="medicine_phone"
                            data-inputmask="'mask': '+79999999999', 'clearIncomplete': 'true'" maxlength="12"
                            x-autocompletetype="phone-full" name="medicine_phone" value="" required="">
@@ -222,25 +121,216 @@ class CFormResultNew extends CBitrixComponent
         <div class="contact-form__form-message">
             <div class="input">
                 <label class="input__label" for="medicine_message">
-                    <div class="input__label-text">Сообщение</div>
+                    <div class="input__label-text">РЎРѕРѕР±С‰РµРЅРёРµ</div>
                     <textarea class="input__input" id="medicine_message" name="medicine_message"></textarea>
                     <div class="input__notification"></div>
                 </label>
             </div>
         </div>
         <div class="contact-form__bottom">
-            <div class="contact-form__bottom-policy">Нажимая &laquo;Отправить&raquo;, Вы&nbsp;подтверждаете, что
-                ознакомлены, полностью согласны и&nbsp;принимаете условия &laquo;Согласия на&nbsp;обработку персональных
-                данных&raquo;.
+            <div class="contact-form__bottom-policy">РќР°Р¶РёРјР°СЏ &laquo;РћС‚РїСЂР°РІРёС‚СЊ&raquo;, Р’С‹&nbsp;РїРѕРґС‚РІРµСЂР¶РґР°РµС‚Рµ, С‡С‚Рѕ
+                РѕР·РЅР°РєРѕРјР»РµРЅС‹, РїРѕР»РЅРѕСЃС‚СЊСЋ СЃРѕРіР»Р°СЃРЅС‹ Рё&nbsp;РїСЂРёРЅРёРјР°РµС‚Рµ СѓСЃР»РѕРІРёСЏ &laquo;РЎРѕРіР»Р°СЃРёСЏ РЅР°&nbsp;РѕР±СЂР°Р±РѕС‚РєСѓ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С…
+                РґР°РЅРЅС‹С…&raquo;.
             </div>
-            <button class="form-button contact-form__bottom-button" type="submit" data-success="Отправлено"
-                    data-error="Ошибка отправки">
-                <div class="form-button__title">Оставить заявку</div>
+            <button class="form-button contact-form__bottom-button" type="submit" data-success="РћС‚РїСЂР°РІР»РµРЅРѕ"
+                    data-error="РћС€РёР±РєР° РѕС‚РїСЂР°РІРєРё">
+                <div class="form-button__title">РћСЃС‚Р°РІРёС‚СЊ Р·Р°СЏРІРєСѓ</div>
             </button>
         </div>
     </form>
 </div>
 </body>
 </html>
-```
+
+
+
+4. .description.php
+
+
+
+php
+
+
+
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+use Bitrix\Main\Localization\Loc;
+
+$arComponentDescription = [
+    "NAME" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT"),
+    "DESCRIPTION" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_DESCRIPTION"),
+    "COMPLEX" => "N",
+    "PATH" => [
+        "ID" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_PATH_ID"),
+        "NAME" => Loc::getMessage("FORM_RESULT_NEW_COMPONENT_PATH_NAME"),
+    ],
+];
+?>
+
+
+
+5. .parameters.php
+
+
+
+php
+
+
+
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Loader;
+
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р»РѕРєР°Р»РёР·Р°С†РёРё
+// Loc::loadMessages(__FILE__);
+
+// РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РјРѕРґСѓР»СЊ main СѓСЃС‚Р°РЅРѕРІР»РµРЅ
+if (!Loader::includeModule('main')) {
+    throw new Exception(Loc::getMessage('MAIN_MODULE_NOT_INSTALLED'));
+}
+
+// РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РјРѕРґСѓР»СЊ РІРµР±-С„РѕСЂРј СѓСЃС‚Р°РЅРѕРІР»РµРЅ
+if (!Loader::includeModule('form')) {
+    throw new Exception(Loc::getMessage('FORM_MODULE_NOT_INSTALLED'));
+}
+
+// РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє РІРµР±-С„РѕСЂРј
+$webForms = [];
+try {
+    // РСЃРїРѕР»СЊР·СѓРµРј РєР»Р°СЃСЃ CForm РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёСЃРєР° С„РѕСЂРј
+    $dbForms = CForm::GetList($by = "s_sort", $order = "asc", ["ACTIVE" => "Y"], $is_filtered);
+    
+    while ($form = $dbForms->Fetch()) {
+        $webForms[$form['ID']] = $form['NAME'];
+    }
+
+    if (empty($webForms)) {
+        $webForms[0] = Loc::getMessage('NO_FORMS_FOUND'); // Р’ СЃР»СѓС‡Р°Рµ РїСѓСЃС‚РѕРіРѕ СЃРїРёСЃРєР°
+    }
+} catch (Exception $e) {
+    file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_errors.txt', date('Y-m-d H:i:s') . " - РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ С„РѕСЂРј: " . $e->getMessage() . "\n", FILE_APPEND);
+    $webForms[0] = 'РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ С„РѕСЂРј'; // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ РІ РєР°С‡РµСЃС‚РІРµ РІР°СЂРёР°РЅС‚Р° РІ РІС‹РїР°РґР°СЋС‰РµРј СЃРїРёСЃРєРµ
+}
+
+// РџР°СЂР°РјРµС‚СЂС‹ РєРѕРјРїРѕРЅРµРЅС‚Р°
+$arComponentParameters = [
+    'PARAMETERS' => [
+        'CACHE_TIME' => ['DEFAULT' => 3600],
+        'WEB_FORM_ID' => [
+            'PARENT' => 'BASE',
+            'NAME' => Loc::getMessage('WEB_FORM_ID'),
+            'TYPE' => 'LIST',
+            'VALUES' => $webForms,
+            'DEFAULT' => '',
+            'REFRESH' => 'Y'
+        ],
+    ]
+];
+?>
+
+
+
+6. class.php
+
+
+
+php
+
+
+
+<?php
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Loader;
+
+class CFormResultNew extends CBitrixComponent
+{
+    public function executeComponent()
+    {
+        // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РјРѕРґСѓР»СЊ РІРµР±-С„РѕСЂРј СѓСЃС‚Р°РЅРѕРІР»РµРЅ
+        if (!Loader::includeModule('form')) {
+            throw new Exception(Loc::getMessage('FORM_MODULE_NOT_INSTALLED'));
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST" && check_bitrix_sessid()) {
+            $this->processForm();
+        }
+
+        $this->includeComponentTemplate();
+    }
+
+    protected function processForm()
+    {
+        // Р›РѕРіРёСЂРѕРІР°РЅРёРµ РІС…РѕРґСЏС‰РёС… РґР°РЅРЅС‹С…
+        $incomingData = $_POST; // Р’С…РѕРґСЏС‰РёРµ РґР°РЅРЅС‹Рµ
+        $logEntryIn = date('Y-m-d H:i:s') . " IN:\n" . json_encode($incomingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryIn, FILE_APPEND);
+
+        // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РІРµР±-С„РѕСЂРјР° РІС‹Р±СЂР°РЅР°
+        if (empty($this->arParams['WEB_FORM_ID'])) {
+            return;
+        }
+
+        // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РІСЃРµ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ РїРѕР»СЏ Р·Р°РїРѕР»РЅРµРЅС‹
+        $requiredFields = ['medicine_name', 'medicine_company', 'medicine_email', 'medicine_phone'];
+        foreach ($requiredFields as $field) {
+            if (empty($incomingData[$field])) {
+                $outgoingData = [
+                    'status' => 'error',
+                    'message' => "РџРѕР»Рµ '{$field}' РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґР»СЏ Р·Р°РїРѕР»РЅРµРЅРёСЏ."
+                ];
+                // Р›РѕРіРёСЂСѓРµРј РѕС€РёР±РєСѓ
+                $logEntryError = date('Y-m-d H:i:s') . " ERROR:\n" . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryError, FILE_APPEND);
+                return;
+            }
+        }
+
+        // РџРѕРґРіРѕС‚РѕРІРєР° РјР°СЃСЃРёРІР° Р·РЅР°С‡РµРЅРёР№ РѕС‚РІРµС‚РѕРІ Р±РµР· РїСЂРµС„РёРєСЃРѕРІ
+        $arValues = [
+            "medicine_name" => $incomingData['medicine_name'],
+            "medicine_company" => $incomingData['medicine_company'],
+            "medicine_email" => $incomingData['medicine_email'],
+            "medicine_phone" => $incomingData['medicine_phone'],
+            "medicine_message" => $incomingData['medicine_message'],
+        ];
+
+        // Р›РѕРіРёСЂРѕРІР°РЅРёРµ РјР°СЃСЃРёРІР° Р·РЅР°С‡РµРЅРёР№ РїРµСЂРµРґ РґРѕР±Р°РІР»РµРЅРёРµРј
+        $logEntryValues = date('Y-m-d H:i:s') . " VALUES:\n" . json_encode($arValues, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryValues, FILE_APPEND);
+
+        // РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ С„РѕСЂРјС‹
+        $resultId = CFormResult::Add($this->arParams['WEB_FORM_ID'], $arValues);
+
+        if ($resultId) {
+            // РЈСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅРѕ
+            $outgoingData = [
+                'status' => 'success',
+                'message' => 'Р¤РѕСЂРјР° СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅР°. ID СЂРµР·СѓР»СЊС‚Р°С‚Р°: ' . $resultId
+            ];
+        } else {
+            // РћС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё
+            global $APPLICATION;
+            $error = $APPLICATION->GetException();
+            $errorMessage = $error ? $error->GetString() : 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СЂРµР·СѓР»СЊС‚Р°С‚Р°.';
+            
+            // Р›РѕРіРёСЂСѓРµРј РѕС€РёР±РєСѓ СЃ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРµР№
+            $logEntryError = date('Y-m-d H:i:s') . " ERROR:\n" . json_encode(['status' => 'error', 'message' => $errorMessage, 'arValues' => $arValues], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
+            file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryError, FILE_APPEND);
+
+            $outgoingData = [
+                'status' => 'error',
+                'message' => 'РћС€РёР±РєР° РїСЂРё РѕР±СЂР°Р±РѕС‚РєРµ С„РѕСЂРјС‹: ' . $errorMessage
+            ];
+        }
+
+        // Р›РѕРіРёСЂРѕРІР°РЅРёРµ РёСЃС…РѕРґСЏС‰РёС… РґР°РЅРЅС‹С…
+        $logEntryOut = date('Y-m-d H:i:s') . " OUT:\n" . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\nAR_VALUES:\n" . json_encode($arValues, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryOut, FILE_APPEND);
+    }
+}
+?>
+
 
