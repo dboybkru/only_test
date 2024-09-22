@@ -8,12 +8,15 @@ class CFormResultNew extends CBitrixComponent
 {
     public function executeComponent()
     {
-        // Проверяем, что модуль веб-форм установлен
+        $this->log("Component execution started.");
+
         if (!Loader::includeModule('form')) {
+            $this->log("Form module not installed.");
             throw new Exception(Loc::getMessage('FORM_MODULE_NOT_INSTALLED'));
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST" && check_bitrix_sessid()) {
+            $this->log("Processing form submission.");
             $this->processForm();
         }
 
@@ -22,17 +25,38 @@ class CFormResultNew extends CBitrixComponent
 
     protected function processForm()
     {
-        // Логирование входящих данных
-        $incomingData = $_POST; // Входящие данные
-        $logEntryIn = date('Y-m-d H:i:s') . " IN:\n" . json_encode($incomingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryIn, FILE_APPEND);
+        $incomingData = $_POST;
+        $this->log("Incoming request data: " . json_encode($incomingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        // Проверяем, что веб-форма выбрана
         if (empty($this->arParams['WEB_FORM_ID'])) {
+            $this->log("WEB_FORM_ID not specified.");
             return;
         }
 
-        // Проверяем, что все обязательные поля заполнены
+        $formId = $this->arParams['WEB_FORM_ID'];
+
+        // Получаем информацию о полях и вопросах формы
+        $rsFields = CFormField::GetList($formId, 'ALL', $by = 's_id', $order = 'asc', [], $is_filtered);
+        $questionIdMap = [];
+        $fieldTypes = [];
+
+        while ($arField = $rsFields->Fetch()) {
+            $questionIdMap[$arField['SID']] = $arField['ID'];
+            $this->log("Mapped SID: {$arField['SID']} to Question ID: {$arField['ID']}");
+        }
+
+        // Получаем информацию о типах ответов
+        foreach ($questionIdMap as $sid => $questionId) {
+            $rsAnswers = CFormAnswer::GetList($questionId, $by = "s_id", $order = "asc", [], $is_filtered);
+            while ($arAnswer = $rsAnswers->Fetch()) {
+                $fieldTypes[$sid] = $arAnswer['FIELD_TYPE'];
+                $this->log("Question ID: {$questionId}, Answer Field Type: {$arAnswer['FIELD_TYPE']}");
+            }
+        }
+
+        $this->log("Question IDs mapped successfully.");
+
+        // Обязательные поля, включая medicine_phone
         $requiredFields = ['medicine_name', 'medicine_company', 'medicine_email', 'medicine_phone'];
         foreach ($requiredFields as $field) {
             if (empty($incomingData[$field])) {
@@ -40,54 +64,56 @@ class CFormResultNew extends CBitrixComponent
                     'status' => 'error',
                     'message' => "Поле '{$field}' обязательно для заполнения."
                 ];
-                // Логируем ошибку
-                $logEntryError = date('Y-m-d H:i:s') . " ERROR:\n" . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-                file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryError, FILE_APPEND);
+                $this->log("Error: " . $outgoingData['message']);
                 return;
             }
         }
 
-        // Подготовка массива значений ответов без префиксов
-        $arValues = [
-            "medicine_name" => $incomingData['medicine_name'],
-            "medicine_company" => $incomingData['medicine_company'],
-            "medicine_email" => $incomingData['medicine_email'],
-            "medicine_phone" => $incomingData['medicine_phone'],
-            "medicine_message" => $incomingData['medicine_message'],
-        ];
+        $this->log("All required fields are filled.");
 
-        // Логирование массива значений перед добавлением
-        $logEntryValues = date('Y-m-d H:i:s') . " VALUES:\n" . json_encode($arValues, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryValues, FILE_APPEND);
-
-        // Создаем новый результат формы
-        $resultId = CFormResult::Add($this->arParams['WEB_FORM_ID'], $arValues);
+        $resultId = CFormResult::Add($formId, [
+            'NAME' => $incomingData['medicine_name'],
+            'COMPANY' => $incomingData['medicine_company'],
+            'EMAIL' => $incomingData['medicine_email'],
+            'PHONE' => $incomingData['medicine_phone']
+        ]);
 
         if ($resultId) {
-            // Успешно добавлено
-            $outgoingData = [
-                'status' => 'success',
-                'message' => 'Форма успешно обработана. ID результата: ' . $resultId
-            ];
+            $this->log("Form result added successfully with ID: $resultId.");
         } else {
-            // Ошибка при добавлении
-            global $APPLICATION;
-            $error = $APPLICATION->GetException();
-            $errorMessage = $error ? $error->GetString() : 'Неизвестная ошибка при добавлении результата.';
-            
-            // Логируем ошибку с дополнительной информацией
-            $logEntryError = date('Y-m-d H:i:s') . " ERROR:\n" . json_encode(['status' => 'error', 'message' => $errorMessage, 'arValues' => $arValues], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryError, FILE_APPEND);
-
-            $outgoingData = [
-                'status' => 'error',
-                'message' => 'Ошибка при обработке формы: ' . $errorMessage
-            ];
+            $this->log("Failed to add form result.");
+            return;
         }
 
-        // Логирование исходящих данных
-        $logEntryOut = date('Y-m-d H:i:s') . " OUT:\n" . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\nAR_VALUES:\n" . json_encode($arValues, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n________\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntryOut, FILE_APPEND);
+        $outgoingData = [
+            'status' => 'success',
+            'message' => 'Форма успешно обработана.'
+        ];
+
+        // Установка ответов для результата формы
+        foreach ($questionIdMap as $sid => $questionId) {
+            if (isset($incomingData[$sid])) {
+                $value = $incomingData[$sid];
+                $fieldType = $fieldTypes[$sid] ?? 'unknown';
+                $this->log("Setting field for SID: $sid with value: $value and field type: $fieldType");
+
+                $setResult = CFormResult::SetField($resultId, $sid, [$questionId => $value]);
+                if ($setResult) {
+                    $this->log("Field for SID: $sid set successfully.");
+                } else {
+                    $this->log("Failed to set field for SID: $sid.");
+                }
+            }
+        }
+
+        $this->log("Answers set successfully.");
+        $this->log("Outgoing response data: " . json_encode($outgoingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+    protected function log($message)
+    {
+        $logEntry = date('Y-m-d H:i:s') . " " . $message . "\n";
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/log_templ.txt', $logEntry, FILE_APPEND);
     }
 }
 ?>
