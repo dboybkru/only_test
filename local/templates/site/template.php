@@ -1,8 +1,48 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
-<?$APPLICATION->SetTitle("Главная страница");?>
-
 <!DOCTYPE html>
 <html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?$APPLICATION->ShowTitle()?></title>
+    <link rel="stylesheet" href="<?=SITE_TEMPLATE_PATH?>/style.css">
+    <?$APPLICATION->ShowHead();?>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #e9ecef;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .admin-menu {
+            margin-top: 20px;
+        }
+    </style>
+</head>
 <body>
     <?$APPLICATION->ShowPanel();?>
     <header>
@@ -45,4 +85,10 @@
         </main>
     </div>
 
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+    <footer>
+        <div class="container">
+            <p>&copy; <?= date("Y") ?> Ваш сайт. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>

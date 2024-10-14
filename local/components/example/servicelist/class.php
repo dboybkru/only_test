@@ -7,10 +7,10 @@ class CExampleArticleList extends CBitrixComponent
     {
         // Устанавливаем значения по умолчанию для параметров
         if (empty($arParams['IBLOCK_TYPE'])) {
-            $arParams['IBLOCK_TYPE'] = 'shablon'; // Замените на тип инфоблока по умолчанию
+            $arParams['IBLOCK_TYPE'] = 'news'; 
         }
         if (empty($arParams['IBLOCK_ID'])) {
-            $arParams['IBLOCK_ID'] = ''; // Здесь можно оставить пустым, если ID будет передан ниже
+            $arParams['IBLOCK_ID'] = ''; 
         }
         
         return $arParams;
@@ -18,6 +18,12 @@ class CExampleArticleList extends CBitrixComponent
 
     public function executeComponent()
     {
+        // Подключаем модуль инфоблоков
+        if (!CModule::IncludeModule("iblock")) {
+            ShowError("Модуль инфоблоков не установлен");
+            return;
+        }
+
         // Если ID инфоблока не задан, получаем его по типу
         if (empty($this->arParams['IBLOCK_ID'])) {
             $res = CIBlock::GetList([], ['IBLOCK_TYPE' => $this->arParams['IBLOCK_TYPE'], 'ACTIVE' => 'Y']);

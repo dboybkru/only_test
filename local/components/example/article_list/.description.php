@@ -8,8 +8,8 @@ $arComponentDescription = [
     "DESCRIPTION" => Loc::getMessage("EXAMPLE_ARTICLE_LIST_COMPONENT_DESCRIPTION"),
     "COMPLEX" => "N",
     "PATH" => [
-        "ID" => "example",
-        "NAME" => Loc::getMessage("EXAMPLE_ARTICLE_LIST_NAME"),
+	"ID" => Loc::getMessage("EXAMPLE_ARTICLE_LIST_COMPONENT_PATH_ID"),
+        "NAME" => Loc::getMessage("EXAMPLE_ARTICLE_LIST_COMPONENT_PATH_NAME"),
     ],
 ];
 ?>
